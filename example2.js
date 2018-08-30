@@ -28,7 +28,6 @@ app.get('/getallspells', (req, res) => {
 });
 
 app.get('/spell/:id/', (req, res) => {
-  debugger; 
   const { id } = req.params; //what is this {id} syntax, what does it do? //:id is an attribute on req.params, :id = req.params.id
   // const resData = spells.filter(item => item.id === id);
   const resData = spells.filter(item => { //filters elements in spells array (objects) to see if item.id === to id, returns an array of items where item.id === id
@@ -40,6 +39,7 @@ app.get('/spell/:id/', (req, res) => {
 });
 
 app.post('/addspell', (req, res) => {
+  debugger;
   console.log('req.body', req.body);
   let spellObject = req.body;
   spellObject.id = nextId;

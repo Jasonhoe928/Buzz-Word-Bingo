@@ -13,7 +13,7 @@ app.use((req, res, next) => {
 app.use(bp.urlencoded({ extended: true }));
 
 app.use(express.static('public'));
-
+let nextId = 3
 let totalScore = 0;
 let buzzwords = [
     {
@@ -25,22 +25,22 @@ let buzzwords = [
         id: 2,
         buzzword: 'spaghetti',
         points: 9
-    },
-    {
-        id: 3,
-        buzzword: 'calzone',
-        points: 7
-    },
-    {
-        id: 4,
-        buzzword: 'fettuccini',
-        points: 10
-    },
-    {
-        id: 5,
-        buzzword: 'pizza',
-        points: 5
     }
+    // {
+    //     id: 3,
+    //     buzzword: 'calzone',
+    //     points: 7
+    // },
+    // {
+    //     id: 4,
+    //     buzzword: 'fettuccini',
+    //     points: 10
+    // },
+    // {
+    //     id: 5,
+    //     buzzword: 'pizza',
+    //     points: 5
+    // }
 ]
 
 app.get('/', (req,res) => {
@@ -53,8 +53,13 @@ app.get('/buzzwords', (req, res) => {
 
 app.post('/buzzwords', (req, res) => {
     console.log('req body', req.body)
-    buzzwords.push(req.body);
-    res.send(`{'success': OK}`);
+    if(buzzwords.length < 5) {
+        let buzzwordObject = req.body;
+        buzzwordObject.id = nextId;
+        nextId++;
+        buzzwords.push(req.body);
+        res.send(`{'success': OK}`);
+    }
 })
 
 app.put('/buzzwords', (req, res) => {
@@ -63,14 +68,16 @@ app.put('/buzzwords', (req, res) => {
             element.points = req.body.points;
         }
     })
-    res.send(`{success: OK`);
+    res.send(`{success: OK}`);
 })
 
 app.delete('/buzzwords', (req, res) => {
     buzzwords.map(element => {
         if(element.buzzword === req.body.buzzword) {
-            console.log(buzzwords.indexOf(element.buzzword));
-            return buzzwords.splice(buzzwords.indexOf(element.buzzword), 1);
+            console.log('element id', element.id)
+            console.log(buzzwords)
+            
+            return buzzwords.splice(element.id-1, 1);
         }
     })
 
@@ -81,7 +88,7 @@ app.delete('/buzzwords', (req, res) => {
     //         })
     //     }
     // })
-    res.send(`{success: OK`);
+    res.send(`{success: OK}`);
 })
 
 app.post('/reset', (req, res) => {
@@ -90,13 +97,15 @@ app.post('/reset', (req, res) => {
     res.send(`{success: OK`);
 })
 
-// app.post('/heard', (req, res) => {
-// buzzwords.map(element => {
-//     if(element.buzzword === req.body.buzzword) {
-
-//     }
-// })
-// })
+app.post('/heard', (req, res) => {
+    buzzwords.map(element => {
+    if(element.buzzword === req.body.buzzword) {
+        totalScore += parseInt(element.points);
+        return totalScore;
+    }
+    res.send(`{ "totalScore": ${totalScore} }`)
+})
+})
 
 app.listen(PORT, () => {
     console.log(`Server has starting on port: ${PORT}`);
